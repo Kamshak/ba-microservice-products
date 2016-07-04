@@ -6,11 +6,13 @@ var path    = require('path'),
     restify = require('restify'),
     config  = require('config'),
     routes  = require('./routes'),
-    jwt     = require('restify-jwt');
+    jwt     = require('restify-jwt'),
+    mongojs = require('mongojs');
 
 
 exports.createServer = createServer;
 
+restify.CORS.ALLOW_HEADERS.push('authorization');
 
 /*
  * Set up server
@@ -27,12 +29,13 @@ function createServer (logger) {
   if (logger) settings.log = logger;
 
   var server = restify.createServer(settings);
-
+  server.use(restify.CORS());
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
+  server.use(restify.bodyParser());
   server.use(jwt({
     secret: config.get('server.secret'),
-    credentialsRequired: true,
+    credentialsRequired: false,
     getToken: function fromHeaderOrQuerystring (req) {
       if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
           return req.headers.authorization.split(' ')[1];
@@ -52,7 +55,16 @@ function createServer (logger) {
 
   if (logger) server.on('after', restify.auditLogger({ log: logger }));
 
-  routes(server, logger);
+  var mongoUrl = config.get("server.mongoUrl");
+  logger.info("Connecting to MongDB " + mongoUrl);
+  var db = mongojs(mongoUrl);
+  db.on('error', function (err) {
+    logger.error(err);
+  });
+  db.on('connect', function() {
+    logger.info("Connected to MongoDB");
+  });
+  routes(server, logger, db);
 
   return server;
 }

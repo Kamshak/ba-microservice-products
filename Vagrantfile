@@ -2,12 +2,14 @@ $script = <<SCRIPT
   curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
   apt-get install -y nodejs build-essential
   npm install -g npm@latest
+  npm install -g bunyan
 
   apt-get install mongodb
 
   su vagrant
   cd /vagrant
   npm install
+  node server.js | bunyan
 SCRIPT
 
 Vagrant.configure("2") do |config|

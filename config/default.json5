@@ -5,7 +5,9 @@
 {
   server: {
     port: 8000,
-    cluster: true
+    cluster: true,
+    secret: "please override",
+    mongoUrl: "mongodb://localhost/database"
   },
   logging: {
     dir: "logs",
