@@ -5,5 +5,5 @@ services:
 
 before_install:
   - docker build -t products-service .
-  - docker run -d  --name=mongo --net=isolated_nw -e AUTH=no tutum/mongodb
+  - docker run -d  --name=mongo -e AUTH=no tutum/mongodb
   - docker run --link=mongo -e NODE_CONFIG=$NODE_CONFIG products-service /usr/local/bin/npm test
