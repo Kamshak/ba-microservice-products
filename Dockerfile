@@ -1,4 +1,5 @@
-FROM node:argon #Latest Node LTS
+#Latest Node LTS
+FROM node:argon
 
 # Create app directory
 RUN mkdir -p /usr/src/app
@@ -11,5 +12,6 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
+ENV NODE_ENV=production
 EXPOSE 8000
 CMD [ "npm", "start" ]

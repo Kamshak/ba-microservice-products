@@ -4,12 +4,11 @@ $script = <<SCRIPT
   npm install -g npm@latest
   npm install -g bunyan
 
-  apt-get install mongodb
+  apt-get install mongodb -y
 
   su vagrant
   cd /vagrant
   npm install
-  node server.js | bunyan
 SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -20,4 +19,6 @@ Vagrant.configure("2") do |config|
 
   # Development environment using gulp live-reload
   config.vm.provision "shell", privileged:true, inline: $script
+
+  # To start the debug server: vagrant ssh -c "cd /vagrant && node server.js | bunyan"
 end
