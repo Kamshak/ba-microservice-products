@@ -3,7 +3,22 @@ sudo: required
 services:
   - docker
 
+cache:
+directories:
+  - /var/lib/docker
+
+
 before_install:
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
   - docker build -t products-service .
   - docker run -d  --name=mongo -e AUTH=no tutum/mongodb
   - docker run --link=mongo -e NODE_CONFIG=$NODE_CONFIG products-service /usr/local/bin/npm test
+
+
+install: true
+
+after_success:
+  - eval "$(~/.local/bin/aws ecr get-login)"
+  - docker tag products-service:latest 277555456074.dkr.ecr.eu-west-1.amazonaws.com/products-service:latest
+  - docker push 277555456074.dkr.ecr.eu-west-1.amazonaws.com/products-service:latest
