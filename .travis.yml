@@ -21,5 +21,7 @@ install: true
 
 after_success:
   - eval "$(~/.local/bin/aws ecr get-login)"
-  - docker tag products-service:latest 277555456074.dkr.ecr.eu-west-1.amazonaws.com/products-service:latest
-  - docker push 277555456074.dkr.ecr.eu-west-1.amazonaws.com/products-service:latest
+  - docker tag products-service:latest 277555456074.dkr.ecr.eu-west-1.amazonaws.com/products-service:build-$TRAVIS_BUILD_NUMBER
+  - docker tag products-service:latest 277555456074.dkr.ecr.eu-west-1.amazonaws.com/products-service:integration-tested
+  - docker push 277555456074.dkr.ecr.eu-west-1.amazonaws.com/products-service:build-$TRAVIS_BUILD_NUMBER
+  - docker push 277555456074.dkr.ecr.eu-west-1.amazonaws.com/products-service:integration-tested
